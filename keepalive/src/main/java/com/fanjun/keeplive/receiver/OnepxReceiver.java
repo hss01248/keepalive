@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Looper;
 
 import com.fanjun.keeplive.activity.OnePixelActivity;
@@ -27,7 +28,13 @@ public final class OnepxReceiver extends BroadcastReceiver {
                         Intent intent2 = new Intent(context, OnePixelActivity.class);
                         intent2.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent2, 0);
+                        //PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent2, 0);
+                        PendingIntent pendingIntent = null;
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+                            pendingIntent  = PendingIntent.getActivity(context, 0, intent2, PendingIntent.FLAG_MUTABLE);
+                        }else {
+                            pendingIntent  = PendingIntent.getActivity(context, 0, intent2, 0);
+                        }
                         try {
                             pendingIntent.send();
                             /*} catch (PendingIntent.CanceledException e) {*/
