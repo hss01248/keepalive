@@ -3,6 +3,8 @@ package com.fanjun.keeplive.service;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 
@@ -38,7 +40,11 @@ public class HideForegroundService extends Service {
             Intent intent = new Intent(getApplicationContext(), NotificationClickReceiver.class);
             intent.setAction(NotificationClickReceiver.CLICK_NOTIFICATION);
             Notification notification = NotificationUtils.createNotification(this, KeepLive.foregroundNotification.getTitle(), KeepLive.foregroundNotification.getDescription(), KeepLive.foregroundNotification.getIconRes(), intent);
-            startForeground(13691, notification);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                startForeground(13691, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+            }else {
+                startForeground(13691, notification);
+            }
         }
     }
 

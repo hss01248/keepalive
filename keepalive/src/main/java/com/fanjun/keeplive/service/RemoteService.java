@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ServiceInfo;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -66,7 +67,11 @@ public final class RemoteService extends Service {
                 Intent intent2 = new Intent(getApplicationContext(), NotificationClickReceiver.class);
                 intent2.setAction(NotificationClickReceiver.CLICK_NOTIFICATION);
                 Notification notification = NotificationUtils.createNotification(RemoteService.this, title, discription, iconRes, intent2);
-                RemoteService.this.startForeground(13691, notification);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    RemoteService.this.startForeground(13691, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+                }else {
+                    RemoteService.this.startForeground(13691, notification);
+                }
             }
         }
 

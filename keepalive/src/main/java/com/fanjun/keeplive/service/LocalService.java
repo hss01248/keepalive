@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.ServiceInfo;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
@@ -101,13 +102,22 @@ public final class LocalService extends Service {
         IntentFilter intentFilter2 = new IntentFilter();
         intentFilter2.addAction("_ACTION_SCREEN_OFF");
         intentFilter2.addAction("_ACTION_SCREEN_ON");
-        registerReceiver(screenStateReceiver, intentFilter2);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(screenStateReceiver, intentFilter2,RECEIVER_NOT_EXPORTED);
+        }else {
+            registerReceiver(screenStateReceiver, intentFilter2);
+        }
         //启用前台服务，提升优先级
         if (KeepLive.foregroundNotification != null) {
             Intent intent2 = new Intent(getApplicationContext(), NotificationClickReceiver.class);
             intent2.setAction(NotificationClickReceiver.CLICK_NOTIFICATION);
             Notification notification = NotificationUtils.createNotification(this, KeepLive.foregroundNotification.getTitle(), KeepLive.foregroundNotification.getDescription(), KeepLive.foregroundNotification.getIconRes(), intent2);
-            startForeground(13691, notification);
+            //startForeground(13691, notification);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                startForeground(13691, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+            }else {
+                startForeground(13691, notification);
+            }
         }
         //绑定守护进程
         try {
